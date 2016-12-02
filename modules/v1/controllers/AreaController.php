@@ -10,6 +10,7 @@ use yii\web\ServerErrorHttpException;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\data\ActiveDataProvider;
+use yii\web\UnprocessableEntityHttpException;
 use yii\filters\auth\HttpBearerAuth;
 use yii\helpers\ArrayHelper;
 use yii\filters\Cors;
@@ -25,9 +26,9 @@ class AreaController extends Controller
     public function behaviors()
     {
         $behaviors = parent::behaviors();
-//        $behaviors['authenticator'] = [
-//            'class' => HttpBearerAuth::className(),
-//        ];
+        $behaviors['authenticator'] = [
+            'class' => HttpBearerAuth::className(),
+        ];
 
         return ArrayHelper::merge(
             [['class' => Cors::className(),],], $behaviors);
@@ -182,13 +183,13 @@ class AreaController extends Controller
         $scenario = $request->getBodyParam('scenario');
 
         if (!$scenario || $id == null) {
-            throw new BadRequestHttpException('参数不全');
+            throw new UnprocessableEntityHttpException('参数不全');
         }
 
         $model = Area::findOne($id);
 
         if ($model == false) {
-            throw new NotFoundHttpException('记录不存在.');
+            throw new NotFoundHttpException('资源不存在.');
         }
 
         $model->setScenario($scenario);
@@ -196,7 +197,7 @@ class AreaController extends Controller
         $model->validate();
 
         if ($model->hasErrors()) {
-            throw new BadRequestHttpException('无效的操作参数:'.Json::encode($model->errors));
+            throw new BadRequestHttpException(Json::encode($model->errors));
         }
 
         if ($model->update(false) === false && !$model->hasErrors()) {

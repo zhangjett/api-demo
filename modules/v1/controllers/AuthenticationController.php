@@ -5,7 +5,8 @@ namespace app\modules\v1\controllers;
 use Yii;
 use yii\rest\Controller;
 use app\modules\v1\models\User;
-use yii\web\BadRequestHttpException;
+use yii\web\UnauthorizedHttpException;
+use yii\web\UnprocessableEntityHttpException;
 use yii\helpers\Json;
 
 /**
@@ -41,18 +42,20 @@ class AuthenticationController extends Controller
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         $model->validate();
         if ($model->hasErrors()) {
-            throw new BadRequestHttpException(Json::encode($model->errors));
+            throw new UnprocessableEntityHttpException(Json::encode($model->errors));
         }
 
         $condition = [
             'phone' => $model->phone,
         ];
 
-
-        $data = $model::find()->select(['user_id', 'access_token', 'password'])->where($condition)->one();
+        $data = $model::find()
+            ->select(['user_id', 'access_token', 'password'])
+            ->where($condition)
+            ->one();
 
         if ($data == null || Yii::$app->getSecurity()->validatePassword($model->password, $data->password) == false ) {
-            throw new BadRequestHttpException('密码验证失败！');
+            throw new UnauthorizedHttpException('密码验证失败！');
         }
 
         return $data;

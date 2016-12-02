@@ -6,7 +6,6 @@ use Yii;
 use yii\rest\Controller;
 use app\modules\v1\models\User;
 use yii\helpers\Json;
-use yii\data\ArrayDataProvider;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
 
@@ -40,7 +39,8 @@ class UserController extends Controller
         $condition = Yii::$app->request->get();
 
         $query = (new Query())
-            ->select(['user_id', 'phone', 'password', 'access_token'])
+            ->select(['user_id', 'phone', 'password', 'name', 'nick_name', 'access_token'])
+            ->from('user')
             ->where($condition);
 
         return new ActiveDataProvider([
@@ -86,8 +86,7 @@ class UserController extends Controller
         ];
 
         $data = $model::find()
-            ->select(['user_id', 'phone', 'password', 'name', 'nick_name', 'email', 'gender', 'qq', 'avatar'
-                , 'birthday_android', 'birthday', 'access_token'])
+            ->select(['user_id', 'phone', 'password', 'name', 'nick_name', 'access_token'])
             ->where($condition)
             ->one();
 
@@ -170,11 +169,10 @@ class UserController extends Controller
             throw new UnprocessableEntityHttpException('参数不全');
         }
 
-
         $model = User::findOne($id);
 
         if ($model == null) {
-            throw new NotFoundHttpException('用户不存在');
+            throw new NotFoundHttpException('资源不存在');
         }
 
         $model->setScenario($scenario);

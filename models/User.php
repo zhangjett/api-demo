@@ -41,10 +41,14 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
+        $data = \app\modules\v1\models\User::find()
+            ->select(['id' => 'user_id'])
+            ->where(['access_token' => $token])
+            ->asArray()
+            ->one();
+
+        if ($data != null ) {
+            return new static($data);
         }
 
         return null;

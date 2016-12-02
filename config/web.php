@@ -75,7 +75,8 @@ $config = [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
                         'v1/user',
-                        'v1/area'
+                        'v1/area',
+                        'v1/authentication'
                     ]
                 ],
             ],
