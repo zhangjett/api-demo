@@ -171,7 +171,7 @@ class AreaController extends Controller
      *
      */
     /**
-     * @apiDefine user
+     * @apiDefine 区域
      *
      * 用户
      */
@@ -183,17 +183,6 @@ class AreaController extends Controller
 
         if (!$scenario || $id == null) {
             throw new BadRequestHttpException('参数不全');
-        }
-
-        $validationModel = new Area([
-            'scenario' => 'prepare'.ucfirst($scenario),
-        ]);
-
-        $validationModel->load(Yii::$app->getRequest()->getBodyParams(), '');
-        $validationModel->validate();
-
-        if ($validationModel->hasErrors()) {
-            throw new BadRequestHttpException('无效的操作参数:'.Json::encode($validationModel->errors));
         }
 
         $model = Area::findOne($id);
