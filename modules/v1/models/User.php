@@ -29,14 +29,9 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             [['phone', 'password'], 'required', 'on' => ['create', 'login']],
-            [['password'], 'required', 'on' => ['prepareUpdatePassword', 'updatePassword']],
+            [['password'], 'required', 'on' => ['updatePassword']],
             [['nick_name', 'gender', 'birthday'], 'required', 'on' => ['updateUserInfo']],
-            [['authentication'], 'required', 'on' => ['updateAuthentication']],
-            [['gender', 'status'], 'integer'],
-            [['password'], 'string', 'length' => [6, 16], 'on' => ['create', 'prepareUpdatePassword']],
-            [['phone'], 'integer', 'min' => 10000000000, 'max' => 19999999999],
-            [['name'], 'string', 'max' => 32],
-            [['email'], 'string', 'max' => 64],
+            [['password'], 'string', 'length' => [6, 16], 'on' => ['create', 'updatePassword']],
             [['create_time', 'update_time'], 'filter', 'filter' => function ($value) {
                 return date('Y-m-d H:i:s');
             }],
@@ -44,10 +39,9 @@ class User extends \yii\db\ActiveRecord
                 return Yii::$app->getSecurity()->generatePasswordHash($value);
             }, 'on' => ['create', 'updatePassword']],
             ['access_token', 'filter', 'filter' => function ($value) {
-                return md5(uniqid(md5(microtime(true)),true)).'#2';
+                return md5(uniqid(md5(microtime(true)),true));
             }, 'on' => ['create']],
-            ['phone', 'validatePhone', 'on' => ['create']],
-            [['access_token', 'create_time', 'update_time'], 'safe'],
+            ['phone', 'validatePhone', 'on' => ['create']]
         ];
     }
 
@@ -55,9 +49,17 @@ class User extends \yii\db\ActiveRecord
     {
         if (!$this->hasErrors()) {
             //用户是否已经注册
-            $data = User::find()->select(['user_id'])->where(['phone'=>$this->phone])->one();
+            $data = User::find()
+                ->select(['user_id'])
+                ->where(['phone' => $this->phone])
+                ->one();
+
+            if(!preg_match('/^1[34578]\d{9}$/', $this->phone)){
+                $this->addError($attribute, '手机号格式不对');
+            }
+
             if ($data != null) {
-                $this->addError($attribute, '手机号已注册住户');
+                $this->addError($attribute, '手机号已经注册');
             }
         }
     }
@@ -67,11 +69,8 @@ class User extends \yii\db\ActiveRecord
         return [
             'create' => ['phone', 'password', 'access_token', 'create_time', 'update_time'],
             'login' => ['phone', 'password'],
-            'prepareUpdatePassword' => ['phone', 'password', 'update_time'],
-            'updatePassword' => ['phone', 'password', 'update_time'],
-            'prepareUpdateUserInfo' => ['avatar', 'nick_name', 'gender', 'birthday', 'update_time'],
+            'updatePassword' => ['password', 'update_time'],
             'updateUserInfo' => ['avatar', 'nick_name', 'gender', 'birthday', 'update_time'],
-            'updateAuthentication' => ['authentication']
         ];
     }
 

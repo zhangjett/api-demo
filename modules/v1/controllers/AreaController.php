@@ -25,9 +25,9 @@ class AreaController extends Controller
     public function behaviors()
     {
         $behaviors = parent::behaviors();
-        $behaviors['authenticator'] = [
-            'class' => HttpBearerAuth::className(),
-        ];
+//        $behaviors['authenticator'] = [
+//            'class' => HttpBearerAuth::className(),
+//        ];
 
         return ArrayHelper::merge(
             [['class' => Cors::className(),],], $behaviors);
@@ -40,22 +40,18 @@ class AreaController extends Controller
         unset($condition['page'], $condition['per-page']);
 
         $query = (new Query())
-            ->select(['user.avatar', 'user.name', 'user.nick_name', 'complaint_id', 'complaint.phone', 'address', 'house.number', 'complaint.content',
-            'complaint.status', 'manager.name AS manager_name', 'complaint.type', 'comment_count', 'praise', 'complaint.create_time', 'complaint.update_time'])
+            ->select(['area_id', 'area_name', 'parent_id', 'area_type', 'status'])
             ->from('area')
-            ->leftJoin('house', 'house.house_id = complaint.house_id')
-            ->leftJoin('property.manager', 'property.manager.manager_id = complaint.manager_id')
-            ->leftJoin('user', 'complaint.user_id = user.user_id')
             ->where($condition);
 
         return new ActiveDataProvider([
             'query' => $query,
             'sort' => [
                 'attributes' => [
-                    'create_time',
+                    'area_id',
                 ],
                 'defaultOrder' => [
-                    'create_time' => SORT_DESC,
+                    'area_id' => SORT_DESC,
                 ]
             ],
         ]);
@@ -95,16 +91,11 @@ class AreaController extends Controller
         ]);
 
         $condition = [
-            'complaint_id' => $id
+            'area_id' => $id
         ];
 
         $data = $model::find()
-            ->select(['user.avatar', 'user.name', 'user.nick_name', 'complaint_id', 'complaint.phone', 'address'
-                , 'house.number', 'complaint.content', 'complaint.status', 'manager.name AS manager_name'
-                , 'complaint.type', 'comment_count', 'praise', 'complaint.create_time', 'complaint.update_time'])
-            ->leftJoin('house', 'house.house_id = complaint.house_id')
-            ->leftJoin('property.manager', 'property.manager.manager_id = complaint.manager_id')
-            ->leftJoin('user', 'complaint.user_id = user.user_id')
+            ->select(['area_id', 'area_name', 'parent_id', 'area_type', 'status'])
             ->where($condition)
             ->asArray()
             ->one();

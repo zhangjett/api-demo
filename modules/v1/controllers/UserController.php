@@ -5,13 +5,15 @@ namespace app\modules\v1\controllers;
 use Yii;
 use yii\rest\Controller;
 use app\modules\v1\models\User;
-use yii\web\BadRequestHttpException;
-use yii\web\ServerErrorHttpException;
 use yii\helpers\Json;
-use yii\web\NotFoundHttpException;
-use yii\httpclient\Client;
-use app\components\NetEase;
 use yii\data\ArrayDataProvider;
+use yii\data\ActiveDataProvider;
+use yii\db\Query;
+
+use yii\web\NotFoundHttpException;
+use yii\web\UnprocessableEntityHttpException;
+use yii\web\ServerErrorHttpException;
+
 use yii\helpers\ArrayHelper;
 use yii\filters\Cors;
 
@@ -35,20 +37,14 @@ class UserController extends Controller
 
     public function actionIndex()
     {
-        $model = new User([
-            'scenario' => 'index',
-        ]);
-
         $condition = Yii::$app->request->get();
 
-        $data = $model::find()
+        $query = (new Query())
             ->select(['user_id', 'phone', 'password', 'access_token'])
-            ->where($condition)
-            ->asArray()
-            ->all();
+            ->where($condition);
 
-        return new ArrayDataProvider([
-            'allModels' => $data,
+        return new ActiveDataProvider([
+            'query' => $query,
         ]);
     }
 
@@ -130,7 +126,7 @@ class UserController extends Controller
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         $model->validate();
         if ($model->hasErrors()) {
-            throw new BadRequestHttpException(Json::encode($model->errors));
+            throw new UnprocessableEntityHttpException(Json::encode($model->errors));
         }
 
         if (!$model->save(false)) {
@@ -171,22 +167,14 @@ class UserController extends Controller
         $scenario = $request->getBodyParam('scenario');
 
         if (!$scenario || $id == null) {
-            throw new BadRequestHttpException('参数不全');
+            throw new UnprocessableEntityHttpException('参数不全');
         }
 
-        $validationModel = new User([
-            'scenario' => 'prepare'.ucfirst($scenario),
-        ]);
-        $validationModel->load(Yii::$app->getRequest()->getBodyParams(), '');
-        $validationModel->validate();
-        if ($validationModel->hasErrors()) {
-            throw new BadRequestHttpException(Json::encode($validationModel->errors));
-        }
 
         $model = User::findOne($id);
 
         if ($model == null) {
-            throw new NotFoundHttpException('用户不存在.');
+            throw new NotFoundHttpException('用户不存在');
         }
 
         $model->setScenario($scenario);
@@ -194,7 +182,7 @@ class UserController extends Controller
         $model->validate();
 
         if ($model->hasErrors()) {
-            throw new BadRequestHttpException(Json::encode($model->errors));
+            throw new UnprocessableEntityHttpException(Json::encode($model->errors));
         }
 
         if ($model->update(false) === false && !$model->hasErrors()) {
