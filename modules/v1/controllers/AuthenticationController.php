@@ -15,7 +15,7 @@ use yii\helpers\Json;
 class AuthenticationController extends Controller
 {
     /**
-     * @api {post} /user-authentications 获取token(登录)
+     * @api {post} /authentications 获取token(登录)
      * @apiName get-token
      * @apiGroup user
      * @apiVersion 1.0.0
