@@ -34,6 +34,32 @@ class AreaController extends Controller
             [['class' => Cors::className(),],], $behaviors);
     }
 
+    /**
+     * @api {get} /areas 获取区域列表
+     * @apiName get-area
+     * @apiGroup area
+     * @apiVersion 1.0.0
+     *
+     * @apiParam (获取用户) {String} id 访问ID.
+     *
+     * @apiSuccess (创建二维码_response) {Number} visit_id 访问ID.
+     * @apiSuccess (创建二维码_response) {String} house_id  小区.
+     * @apiSuccess (创建二维码_response) {String} phone  来访手机号.
+     * @apiSuccess (创建二维码_response) {String} name 访客姓名.
+     * @apiSuccess (创建二维码_response) {String} number  人数.
+     * @apiSuccess (创建二维码_response) {String} license_plate  车牌号.
+     * @apiSuccess (创建二维码_response) {String} begin_time  有效期开始时间.
+     * @apiSuccess (创建二维码_response) {String} end_time  有效期结束时间.
+     * @apiSuccess (创建二维码_response) {String} create_time  创建时间.
+     * @apiSuccess (创建二维码_response) {String} update_time  修改时间.
+     *
+     */
+    /**
+     * @apiDefine area
+     *
+     * 区域
+     */
+
     public function actionIndex()
     {
         $condition = Yii::$app->request->get();
@@ -60,9 +86,9 @@ class AreaController extends Controller
     }
 
     /**
-     * @api {get} /visits/:id 获取访问详情
-     * @apiName get-visit
-     * @apiGroup property
+     * @api {get} /areas/:id 获取区域详情
+     * @apiName get-area-detail
+     * @apiGroup area
      * @apiVersion 1.0.0
      *
      * @apiParam (获取用户) {String} id 访问ID.
@@ -80,9 +106,9 @@ class AreaController extends Controller
      *
      */
     /**
-     * @apiDefine property
+     * @apiDefine area
      *
-     * 物业
+     * 区域
      */
 
     public function actionView($id)
@@ -105,9 +131,9 @@ class AreaController extends Controller
     }
 
     /**
-     * @api {post} /visits 创建二维码
-     * @apiName create-user
-     * @apiGroup property
+     * @api {post} /areas 创建区域
+     * @apiName create-area
+     * @apiGroup area
      * @apiVersion 1.0.0
      *
      * @apiParam (创建二维码) {Number} house_id 小区ID.
@@ -131,9 +157,9 @@ class AreaController extends Controller
      *
      */
     /**
-     * @apiDefine property
+     * @apiDefine area
      *
-     * 物业
+     * 区域
      */
 
     public function actionCreate()
@@ -156,25 +182,25 @@ class AreaController extends Controller
     }
 
     /**
-     * @api {put} /users/:id 修改二维码信息
-     * @apiName update-user
-     * @apiGroup user
+     * @api {put} /areas/:id 修改区域
+     * @apiName update-area
+     * @apiGroup area
      * @apiVersion 1.0.0
      *
-     * @apiParam (修改密码) {Number} id 用户ID.
-     * @apiParam (修改密码) {String} scenario 场景,此处值=updatePassword.
-     * @apiParam (修改密码) {String} phone 手机号.
-     * @apiParam (修改密码) {String} password 密码.
+     * @apiParam (修改区域) {Number} id 用户ID.
+     * @apiParam (修改区域) {String} scenario 场景,此处值=updatePassword.
+     * @apiParam (修改区域) {String} phone 手机号.
+     * @apiParam (修改区域) {String} password 密码.
      *
-     * @apiSuccess (修改密码_response) {Number} user_id 用户ID.
-     * @apiSuccess (修改密码_response) {String} access_token  token.
-     * @apiSuccess (修改密码_response) {String} password  密码.
+     * @apiSuccess (修改区域_response) {Number} user_id 用户ID.
+     * @apiSuccess (修改区域_response) {String} access_token  token.
+     * @apiSuccess (修改区域_response) {String} password  密码.
      *
      */
     /**
-     * @apiDefine 区域
+     * @apiDefine area
      *
-     * 用户
+     * 区域
      */
 
     public function actionUpdate($id)
@@ -186,18 +212,29 @@ class AreaController extends Controller
             throw new UnprocessableEntityHttpException('参数不全');
         }
 
+        $validationModel = new Area([
+                'scenario' => $scenario,
+        ]);
+        $validationModel->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $validationModel->validate();
+
+        if ($validationModel->hasErrors()) {
+            throw new UnprocessableEntityHttpException(Json::encode($validationModel->errors));
+        }
+
         $model = Area::findOne($id);
 
-        if ($model == false) {
+        if ($model == null) {
             throw new NotFoundHttpException('资源不存在.');
         }
 
-        $model->setScenario($scenario);
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-        $model->validate();
-
-        if ($model->hasErrors()) {
-            throw new BadRequestHttpException(Json::encode($model->errors));
+        if (array_key_exists('save'.ucfirst($scenario), $model->scenarios())) {
+            $model->setScenario('save'.ucfirst($scenario));
+            $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+            $model->validate();
+        } else {
+            $model->setScenario($scenario);
+            $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         }
 
         if ($model->update(false) === false && !$model->hasErrors()) {

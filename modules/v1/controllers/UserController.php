@@ -169,18 +169,29 @@ class UserController extends Controller
             throw new UnprocessableEntityHttpException('参数不全');
         }
 
+        $validationModel = new User([
+            'scenario' => $scenario,
+        ]);
+        $validationModel->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $validationModel->validate();
+
+        if ($validationModel->hasErrors()) {
+            throw new UnprocessableEntityHttpException(Json::encode($validationModel->errors));
+        }
+
         $model = User::findOne($id);
 
         if ($model == null) {
             throw new NotFoundHttpException('资源不存在');
         }
 
-        $model->setScenario($scenario);
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-        $model->validate();
-
-        if ($model->hasErrors()) {
-            throw new UnprocessableEntityHttpException(Json::encode($model->errors));
+        if (array_key_exists('save'.ucfirst($scenario), $model->scenarios())) {
+            $model->setScenario('save'.ucfirst($scenario));
+            $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+            $model->validate();
+        } else {
+            $model->setScenario($scenario);
+            $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         }
 
         if ($model->update(false) === false && !$model->hasErrors()) {

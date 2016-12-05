@@ -37,7 +37,7 @@ class User extends \yii\db\ActiveRecord
             }],
             ['password', 'filter', 'filter' => function ($value) {
                 return Yii::$app->getSecurity()->generatePasswordHash($value);
-            }, 'on' => ['create', 'updatePassword']],
+            }, 'on' => ['create', 'saveUpdatePassword']],
             ['access_token', 'filter', 'filter' => function ($value) {
                 return md5(uniqid(md5(microtime(true)),true));
             }, 'on' => ['create']],
@@ -70,6 +70,7 @@ class User extends \yii\db\ActiveRecord
             'create' => ['phone', 'password', 'access_token', 'create_time', 'update_time'],
             'login' => ['phone', 'password'],
             'updatePassword' => ['password', 'update_time'],
+            'saveUpdatePassword' => ['password', 'update_time'],
             'updateUserInfo' => ['name', 'nick_name', 'update_time'],
         ];
     }
