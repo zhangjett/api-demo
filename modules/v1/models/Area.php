@@ -24,10 +24,9 @@ class Area extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['phone', 'password'], 'required', 'on' => ['create']],
-            [['status'], 'required', 'on' => ['updateStatus']],
-            [['password'], 'required', 'on' => ['updatePassword']],
+            [['area_name', 'parent_id', 'area_type', 'status'], 'required', 'on' => ['create']],
             [['area_name'], 'required', 'on' => ['updateName']],
+            [['parent_id'], 'required', 'on' => ['updateParentId']],
             [['parent_id', 'area_type', 'status'], 'integer'],
         ];
     }
@@ -35,9 +34,9 @@ class Area extends \yii\db\ActiveRecord
     public function scenarios()
     {
         return [
-            'create' => ['phone', 'password', 'access_token', 'create_time', 'update_time'],
-            'updateStatus' => ['status'],
+            'create' => ['area_name', 'parent_id', 'area_type', 'status'],
             'updateName' => ['area_name'],
+            'updateParentId' => ['parent_id'],
         ];
     }
 

@@ -30,7 +30,6 @@ class User extends \yii\db\ActiveRecord
         return [
             [['phone', 'password'], 'required', 'on' => ['create', 'login']],
             [['password'], 'required', 'on' => ['updatePassword']],
-            [['name', 'nick_name'], 'required', 'on' => ['updateUserInfo']],
             [['password'], 'string', 'length' => [6, 16], 'on' => ['create', 'updatePassword']],
             [['create_time', 'update_time'], 'filter', 'filter' => function ($value) {
                 return date('Y-m-d H:i:s');
@@ -71,7 +70,6 @@ class User extends \yii\db\ActiveRecord
             'login' => ['phone', 'password'],
             'updatePassword' => ['password', 'update_time'],
             'saveUpdatePassword' => ['password', 'update_time'],
-            'updateUserInfo' => ['name', 'nick_name', 'update_time'],
         ];
     }
 

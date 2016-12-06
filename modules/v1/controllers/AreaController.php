@@ -40,18 +40,11 @@ class AreaController extends Controller
      * @apiGroup area
      * @apiVersion 1.0.0
      *
-     * @apiParam (获取用户) {String} id 访问ID.
-     *
-     * @apiSuccess (创建二维码_response) {Number} visit_id 访问ID.
-     * @apiSuccess (创建二维码_response) {String} house_id  小区.
-     * @apiSuccess (创建二维码_response) {String} phone  来访手机号.
-     * @apiSuccess (创建二维码_response) {String} name 访客姓名.
-     * @apiSuccess (创建二维码_response) {String} number  人数.
-     * @apiSuccess (创建二维码_response) {String} license_plate  车牌号.
-     * @apiSuccess (创建二维码_response) {String} begin_time  有效期开始时间.
-     * @apiSuccess (创建二维码_response) {String} end_time  有效期结束时间.
-     * @apiSuccess (创建二维码_response) {String} create_time  创建时间.
-     * @apiSuccess (创建二维码_response) {String} update_time  修改时间.
+     * @apiSuccess (获取区域列表_response) {String} area_id 区域ID.
+     * @apiSuccess (获取区域列表_response) {String} area_name  区域名称.
+     * @apiSuccess (获取区域列表_response) {String} parent_id  父级ID.
+     * @apiSuccess (获取区域列表_response) {String} area_type 区域类型,1-省/自治区/直辖市;2-地区(省下面的地级市);3-县/市(县级市)/区.
+     * @apiSuccess (获取区域列表_response) {String} status  状态，1-正常，2-停用.
      *
      */
     /**
@@ -91,18 +84,13 @@ class AreaController extends Controller
      * @apiGroup area
      * @apiVersion 1.0.0
      *
-     * @apiParam (获取用户) {String} id 访问ID.
+     * @apiParam (获取区域列表) {String} id 区域ID.
      *
-     * @apiSuccess (创建二维码_response) {Number} visit_id 访问ID.
-     * @apiSuccess (创建二维码_response) {String} house_id  小区.
-     * @apiSuccess (创建二维码_response) {String} phone  来访手机号.
-     * @apiSuccess (创建二维码_response) {String} name 访客姓名.
-     * @apiSuccess (创建二维码_response) {String} number  人数.
-     * @apiSuccess (创建二维码_response) {String} license_plate  车牌号.
-     * @apiSuccess (创建二维码_response) {String} begin_time  有效期开始时间.
-     * @apiSuccess (创建二维码_response) {String} end_time  有效期结束时间.
-     * @apiSuccess (创建二维码_response) {String} create_time  创建时间.
-     * @apiSuccess (创建二维码_response) {String} update_time  修改时间.
+     * @apiSuccess (获取区域列表_response) {String} area_id 区域ID.
+     * @apiSuccess (获取区域列表_response) {String} area_name  区域名称.
+     * @apiSuccess (获取区域列表_response) {String} parent_id  父级ID.
+     * @apiSuccess (获取区域列表_response) {String} area_type 区域类型,1-省/自治区/直辖市;2-地区(省下面的地级市);3-县/市(县级市)/区.
+     * @apiSuccess (获取区域列表_response) {String} status  状态，1-正常，2-停用.
      *
      */
     /**
@@ -136,24 +124,16 @@ class AreaController extends Controller
      * @apiGroup area
      * @apiVersion 1.0.0
      *
-     * @apiParam (创建二维码) {Number} house_id 小区ID.
-     * @apiParam (创建二维码) {String} phone 来访手机号.
-     * @apiParam (创建二维码) {String} name 访客姓名.
-     * @apiParam (创建二维码) {Number} number 人数.
-     * @apiParam (创建二维码) {String} [license_plate=''] 车牌.
-     * @apiParam (创建二维码) {String} begin_time 有效开始时间.
-     * @apiParam (创建二维码) {String} end_time 有效结束时间.
+     * @apiParam (创建区域) {String} area_name  区域名称.
+     * @apiParam (创建区域) {String} parent_id  父级ID.
+     * @apiParam (创建区域) {Number} area_type 区域类型,1-省/自治区/直辖市;2-地区(省下面的地级市);3-县/市(县级市)/区.
+     * @apiParam (创建区域) {Number} status  状态，1-正常，2-停用.
      *
-     * @apiSuccess (创建二维码_response) {String} house_id  小区ID.
-     * @apiSuccess (创建二维码_response) {String} phone 来访手机号.
-     * @apiSuccess (创建二维码_response) {String} name 访客姓名.
-     * @apiSuccess (创建二维码_response) {String} number 人数.
-     * @apiSuccess (创建二维码_response) {String} license_plate 车牌.
-     * @apiSuccess (创建二维码_response) {String} begin_time   有效开始时间.
-     * @apiSuccess (创建二维码_response) {String} end_time  有效结束时间.
-     * @apiSuccess (创建二维码_response) {String} create_time  创建时间.
-     * @apiSuccess (创建二维码_response) {String} update_time  修改时间.
-     * @apiSuccess (创建二维码_response) {Number} visit_id 来访ID.
+     * @apiSuccess (创建区域_response) {Number} area_id 区域ID.
+     * @apiSuccess (创建区域_response) {String} area_name  区域名称.
+     * @apiSuccess (创建区域_response) {String} parent_id  父级ID.
+     * @apiSuccess (创建区域_response) {String} area_type 区域类型,1-省/自治区/直辖市;2-地区(省下面的地级市);3-县/市(县级市)/区.
+     * @apiSuccess (创建区域_response) {String} status  状态，1-正常，2-停用.
      *
      */
     /**
@@ -187,14 +167,25 @@ class AreaController extends Controller
      * @apiGroup area
      * @apiVersion 1.0.0
      *
-     * @apiParam (修改区域) {Number} id 用户ID.
-     * @apiParam (修改区域) {String} scenario 场景,此处值=updatePassword.
-     * @apiParam (修改区域) {String} phone 手机号.
-     * @apiParam (修改区域) {String} password 密码.
+     * @apiParam (修改区域名称) {Number} id 用户ID.
+     * @apiParam (修改区域名称) {String} scenario 场景,此处值=updateName.
+     * @apiParam (修改区域名称) {String} area_name 区域名称.
      *
-     * @apiSuccess (修改区域_response) {Number} user_id 用户ID.
-     * @apiSuccess (修改区域_response) {String} access_token  token.
-     * @apiSuccess (修改区域_response) {String} password  密码.
+     * @apiSuccess (修改区域名称_response) {Number} area_id 区域ID.
+     * @apiSuccess (修改区域名称_response) {String} area_name  区域名称.
+     * @apiSuccess (修改区域名称_response) {Number} parent_id  父级ID.
+     * @apiSuccess (修改区域名称_response) {Number} area_type 区域类型,1-省/自治区/直辖市;2-地区(省下面的地级市);3-县/市(县级市)/区.
+     * @apiSuccess (修改区域名称_response) {Number} status  状态，1-正常，2-停用.
+     *
+     * @apiParam (修改区域父级ID) {Number} id 用户ID.
+     * @apiParam (修改区域父级ID) {String} scenario 场景,此处值=updateParentId.
+     * @apiParam (修改区域父级ID) {String} parent_id 父级ID.
+     *
+     * @apiSuccess (修改区域父级ID_response) {Number} area_id 区域ID.
+     * @apiSuccess (修改区域父级ID_response) {String} area_name  区域名称.
+     * @apiSuccess (修改区域父级ID_response) {String} parent_id  父级ID.
+     * @apiSuccess (修改区域父级ID_response) {Number} area_type 区域类型,1-省/自治区/直辖市;2-地区(省下面的地级市);3-县/市(县级市)/区.
+     * @apiSuccess (修改区域父级ID_response) {Number} status  状态，1-正常，2-停用.
      *
      */
     /**
@@ -222,7 +213,7 @@ class AreaController extends Controller
             throw new UnprocessableEntityHttpException(Json::encode($validationModel->errors));
         }
 
-        $model = Area::findOne($id);
+        $model = Area::findOne((int)$id);
 
         if ($model == null) {
             throw new NotFoundHttpException('资源不存在.');
@@ -242,5 +233,43 @@ class AreaController extends Controller
         }
 
         return $model;
+    }
+
+    /**
+     * @api {delete} /areas/:id 删除区域
+     * @apiName delete-area
+     * @apiGroup area
+     * @apiVersion 1.0.0
+     *
+     * @apiParam (获取区域列表) {String} id 区域ID.
+     *
+     * @apiSuccess (获取区域列表_response) {Number} area_id 区域ID.
+     * @apiSuccess (获取区域列表_response) {String} area_name  区域名称.
+     * @apiSuccess (获取区域列表_response) {Number} parent_id  父级ID.
+     * @apiSuccess (获取区域列表_response) {Number} area_type 区域类型,1-省/自治区/直辖市;2-地区(省下面的地级市);3-县/市(县级市)/区.
+     * @apiSuccess (获取区域列表_response) {Number} status  状态，1-正常，2-停用.
+     *
+     */
+    /**
+     * @apiDefine area
+     *
+     * 区域
+     */
+
+
+    public function actionDelete($id)
+    {
+        if ($id == null) {
+            throw new UnprocessableEntityHttpException('参数不全');
+        }
+
+        $model = Area::findOne($id);
+
+        if ($model->delete() === false) {
+            throw new ServerErrorHttpException('Failed to delete the object for unknown reason.');
+        }
+
+        return $model;
+
     }
 }

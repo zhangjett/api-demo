@@ -8,12 +8,21 @@ use app\modules\v1\models\User;
 use yii\web\UnauthorizedHttpException;
 use yii\web\UnprocessableEntityHttpException;
 use yii\helpers\Json;
+use yii\helpers\ArrayHelper;
+use yii\filters\Cors;
 
 /**
  * Authentication controller for the `v1` module
  */
 class AuthenticationController extends Controller
 {
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+
+        return ArrayHelper::merge(
+            [['class' => Cors::className(),],], $behaviors);
+    }
     /**
      * @api {post} /authentications 获取token(登录)
      * @apiName get-token

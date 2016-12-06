@@ -26,13 +26,30 @@ class UserController extends Controller
     public function behaviors()
     {
         $behaviors = parent::behaviors();
-//        $behaviors['authenticator'] = [
-//            'class' => HttpBearerAuth::className(),
-//        ];
 
         return ArrayHelper::merge(
             [['class' => Cors::className(),],], $behaviors);
     }
+
+    /**
+     * @api {get} /users 获取用户
+     * @apiName get-user
+     * @apiGroup user
+     * @apiVersion 1.0.0
+     *
+     * @apiSuccess (获取用户列表_response) {String} user_id 用户ID.
+     * @apiSuccess (获取用户列表_response) {String} phone  手机号.
+     * @apiSuccess (获取用户列表_response) {String} password  密码.
+     * @apiSuccess (获取用户列表_response) {String} name 用户名.
+     * @apiSuccess (获取用户列表_response) {String} nick_name  昵称.
+     * @apiSuccess (获取用户列表_response) {String} access_token  access_token.
+     *
+     */
+    /**
+     * @apiDefine user
+     *
+     * 用户
+     */
 
     public function actionIndex()
     {
@@ -49,24 +66,19 @@ class UserController extends Controller
     }
 
     /**
-     * @api {get} /users/:id 获取用户
-     * @apiName get-user
+     * @api {get} /users/:id 获取用户详情
+     * @apiName get-user-detail
      * @apiGroup user
      * @apiVersion 1.0.0
      *
      * @apiParam (获取用户) {String} id 用户ID.
      *
-     * @apiSuccess (获取用户_response) {Number} user_id 用户ID.
-     * @apiSuccess (获取用户_response) {String} phone  手机号.
-     * @apiSuccess (获取用户_response) {String} password  密码.
-     * @apiSuccess (获取用户_response) {String} name  姓名.
-     * @apiSuccess (获取用户_response) {String} nick_name  昵称.
-     * @apiSuccess (获取用户_response) {String} email  电子邮箱.
-     * @apiSuccess (获取用户_response) {Number} gender  性别.
-     * @apiSuccess (获取用户_response) {Number} qq  QQ.
-     * @apiSuccess (获取用户_response) {String} avatar  头像.
-     * @apiSuccess (获取用户_response) {String} birthday  生日.
-     * @apiSuccess (获取用户_response) {String} access_token  token.
+     * @apiSuccess (获取用户列表_response) {Number} user_id 用户ID.
+     * @apiSuccess (获取用户列表_response) {String} phone  手机号.
+     * @apiSuccess (获取用户列表_response) {String} password  密码.
+     * @apiSuccess (获取用户列表_response) {String} name 用户名.
+     * @apiSuccess (获取用户列表_response) {String} nick_name  昵称.
+     * @apiSuccess (获取用户列表_response) {String} access_token  access_token.
      *
      */
     /**
@@ -143,15 +155,17 @@ class UserController extends Controller
      *
      * @apiParam (修改密码) {Number} id 用户ID.
      * @apiParam (修改密码) {String} scenario 场景,此处值=updatePassword.
-     * @apiParam (修改密码) {String} phone 手机号.
      * @apiParam (修改密码) {String} password 密码.
-     * @apiParam (修改个人信息) {Number} id Users unique ID.
-     * @apiParam (修改个人信息) {Number} id Users unique ID.
-     * @apiParam (修改个人信息) {Number} id Users unique ID.
      *
      * @apiSuccess (修改密码_response) {Number} user_id 用户ID.
-     * @apiSuccess (修改密码_response) {String} access_token  token.
+     * @apiSuccess (修改密码_response) {String} phone  手机号.
      * @apiSuccess (修改密码_response) {String} password  密码.
+     * @apiSuccess (修改密码_response) {String} name 用户名.
+     * @apiSuccess (修改密码_response) {String} nick_name  昵称.
+     * @apiSuccess (修改密码_response) {Number} status  状态.
+     * @apiSuccess (修改密码_response) {String} access_token  token.
+     * @apiSuccess (修改密码_response) {String} create_time  创建时间.
+     * @apiSuccess (修改密码_response) {String} update_time 修改时间.
      *
      */
     /**
@@ -199,5 +213,47 @@ class UserController extends Controller
         }
 
         return $model;
+    }
+
+
+    /**
+     * @api {delete} /users/:id 删除用户
+     * @apiName delete-user
+     * @apiGroup user
+     * @apiVersion 1.0.0
+     *
+     * @apiParam (获取用户) {String} id 用户ID.
+     *
+     * @apiSuccess (修改密码_response) {Number} user_id 用户ID.
+     * @apiSuccess (修改密码_response) {String} phone  手机号.
+     * @apiSuccess (修改密码_response) {String} password  密码.
+     * @apiSuccess (修改密码_response) {String} name 用户名.
+     * @apiSuccess (修改密码_response) {String} nick_name  昵称.
+     * @apiSuccess (修改密码_response) {Number} status  状态.
+     * @apiSuccess (修改密码_response) {String} access_token  token.
+     * @apiSuccess (修改密码_response) {String} create_time  创建时间.
+     * @apiSuccess (修改密码_response) {String} update_time 修改时间.
+     *
+     */
+    /**
+     * @apiDefine user
+     *
+     * 用户
+     */
+
+    public function actionDelete($id)
+    {
+        if ($id == null) {
+            throw new UnprocessableEntityHttpException('参数不全');
+        }
+
+        $model = User::findOne($id);
+
+        if ($model->delete() === false) {
+            throw new ServerErrorHttpException('Failed to delete the object for unknown reason.');
+        }
+
+        return $model;
+
     }
 }
