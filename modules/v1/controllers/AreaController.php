@@ -40,6 +40,11 @@ class AreaController extends Controller
      * @apiGroup area
      * @apiVersion 1.0.0
      *
+     * @apiParam (获取区域列表) {String} [page = 1] 页码.
+     * @apiParam (获取区域列表) {String} [per-page = 20] 每页数量.
+     * @apiParam (获取区域列表) {string="area_id", "area_type"} [sort] 排序字段,多个字段用英文逗号隔开.降序在前面加入-
+     *
+     *
      * @apiSuccess (获取区域列表_response) {String} area_id 区域ID.
      * @apiSuccess (获取区域列表_response) {String} area_name  区域名称.
      * @apiSuccess (获取区域列表_response) {String} parent_id  父级ID.
@@ -57,22 +62,26 @@ class AreaController extends Controller
     {
         $condition = Yii::$app->request->get();
 
-        unset($condition['page'], $condition['per-page']);
-
         $query = (new Query())
             ->select(['area_id', 'area_name', 'parent_id', 'area_type', 'status'])
-            ->from('area')
-            ->where($condition);
+            ->from('area');
+
+            if (is_array($condition) && (count($condition) > 0)) {
+                foreach ($condition as $key => $value) {
+                    if (!in_array($key, ['page', 'per-page', 'sort'])) {
+                        $query->andWhere($key.' = :'.$key, [':'.$key => $value]);
+                    }
+                }
+            }
 
         return new ActiveDataProvider([
             'query' => $query,
             'sort' => [
+                'enableMultiSort' => true,
                 'attributes' => [
                     'area_id',
+                    'area_type'
                 ],
-                'defaultOrder' => [
-                    'area_id' => SORT_DESC,
-                ]
             ],
         ]);
 
@@ -105,13 +114,9 @@ class AreaController extends Controller
             'scenario' => 'view',
         ]);
 
-        $condition = [
-            'area_id' => $id
-        ];
-
         $data = $model::find()
             ->select(['area_id', 'area_name', 'parent_id', 'area_type', 'status'])
-            ->where($condition)
+            ->where('area_id =: area_id', [':area_id' => $id])
             ->asArray()
             ->one();
 
