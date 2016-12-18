@@ -40,9 +40,11 @@ class AreaController extends Controller
      * @apiGroup area
      * @apiVersion 1.0.0
      *
+     * @apiParam (获取区域列表) {String} [area_name = ''] 地区名称.
+     * @apiParam (获取区域列表) {String="1", "2", "3"} [area_type = ''] 地区类型.
      * @apiParam (获取区域列表) {String} [page = 1] 页码.
      * @apiParam (获取区域列表) {String} [per-page = 20] 每页数量.
-     * @apiParam (获取区域列表) {string="area_id", "area_type"} [sort] 排序字段,多个字段用英文逗号隔开.降序在前面加入-
+     * @apiParam (获取区域列表) {string="area_id", "-area_id", "area_type", "-area_type"} [sort] 排序字段
      *
      *
      * @apiSuccess (获取区域列表_response) {String} area_id 区域ID.
@@ -68,8 +70,11 @@ class AreaController extends Controller
 
             if (is_array($condition) && (count($condition) > 0)) {
                 foreach ($condition as $key => $value) {
-                    if (!in_array($key, ['page', 'per-page', 'sort'])) {
-                        $query->andWhere($key.' = :'.$key, [':'.$key => $value]);
+                    if (in_array($key, ['area_name', 'area_type'])) {
+                        if (($key == 'area_type')&&(!in_array($value, ['1', '2', '3']))) {
+                            continue;
+                        }
+                        $query->andWhere($key.' = :key', [':key' => $value]);
                     }
                 }
             }

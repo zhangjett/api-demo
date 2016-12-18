@@ -39,7 +39,7 @@ class UserController extends Controller
      *
      * @apiParam (获取区域列表) {String} [page = 1] 页码.
      * @apiParam (获取区域列表) {String} [per-page = 20] 每页数量.
-     * @apiParam (获取区域列表) {string="user_id"} [sort] 排序字段,多个字段用英文逗号隔开.降序在前面加入-
+     * @apiParam (获取区域列表) {string="user_id","-user_id"} [sort] 排序字段
      *
      * @apiSuccess (获取用户列表_response) {String} user_id 用户ID.
      * @apiSuccess (获取用户列表_response) {String} phone  手机号.
@@ -65,8 +65,8 @@ class UserController extends Controller
 
             if (is_array($condition) && (count($condition) > 0)) {
                 foreach ($condition as $key => $value) {
-                    if (!in_array($key, ['page', 'per-page', 'sort'])) {
-                        $query->andWhere($key.' = :'.$key, [':'.$key => $value]);
+                    if (in_array($key, ['phone'])) {
+                        $query->andWhere($key.' = :key', [':key' => $value]);
                     }
                 }
             }
