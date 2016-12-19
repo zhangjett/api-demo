@@ -41,7 +41,8 @@ class AreaController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiParam (获取区域列表) {String} [area_name = ''] 地区名称.
-     * @apiParam (获取区域列表) {String="1", "2", "3"} [area_type = ''] 地区类型.
+     * @apiParam (获取区域列表) {String=1, 2, 3} [area_type = ''] 地区类型.
+     * @apiParam (获取区域列表) {String} [q = ''] 搜索条件.
      * @apiParam (获取区域列表) {String} [page = 1] 页码.
      * @apiParam (获取区域列表) {String} [per-page = 20] 每页数量.
      * @apiParam (获取区域列表) {string="area_id", "-area_id", "area_type", "-area_type"} [sort] 排序字段
@@ -70,12 +71,17 @@ class AreaController extends Controller
 
             if (is_array($condition) && (count($condition) > 0)) {
                 foreach ($condition as $key => $value) {
-                    if (in_array($key, ['area_name', 'area_type'])) {
-                        if (($key == 'area_type')&&(!in_array($value, ['1', '2', '3']))) {
+                    if (in_array($key, ['area_name', 'area_type', 'q'])) {
+                        if (($key == 'area_type')&&(!in_array($value, [1, 2, 3]))) {
+                            continue;
+                        }
+                        if ($key == 'q') {
+                            $query->andWhere(['like', 'area_name', $value]);
                             continue;
                         }
                         $query->andWhere($key.' = :key', [':key' => $value]);
                     }
+
                 }
             }
 

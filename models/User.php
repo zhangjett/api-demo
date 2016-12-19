@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\db\Query;
+
 class User extends \yii\base\Object implements \yii\web\IdentityInterface
 {
     public $id;
@@ -41,13 +43,14 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        $data = \app\modules\v1\models\User::find()
+        $data = (new Query)
+            ->from('user')
             ->select(['id' => 'user_id'])
-            ->where(['access_token' => $token])
-            ->asArray()
+            ->where('access_token = :access_token')
+            ->addParams([':access_token' => $token])
             ->one();
 
-        if ($data != null ) {
+        if ($data != false ) {
             return new static($data);
         }
 
