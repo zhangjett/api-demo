@@ -14,8 +14,8 @@ use Yii;
  * @property string $nick_name
  * @property integer $status
  * @property string $access_token
- * @property string $create_time
- * @property string $update_time
+ * @property string $created_at
+ * @property string $updated_at
  */
 class User extends \yii\db\ActiveRecord
 {
@@ -31,8 +31,8 @@ class User extends \yii\db\ActiveRecord
             [['phone', 'password'], 'required', 'on' => ['create', 'login']],
             [['password'], 'required', 'on' => ['updatePassword']],
             [['password'], 'string', 'length' => [6, 16], 'on' => ['create', 'updatePassword']],
-            [['create_time', 'update_time'], 'filter', 'filter' => function ($value) {
-                return date('Y-m-d H:i:s');
+            [['created_at', 'updated_at'], 'filter', 'filter' => function ($value) {
+                return time();
             }],
             ['password', 'filter', 'filter' => function ($value) {
                 return Yii::$app->getSecurity()->generatePasswordHash($value);
@@ -66,10 +66,10 @@ class User extends \yii\db\ActiveRecord
     public function scenarios()
     {
         return [
-            'create' => ['phone', 'password', 'access_token', 'create_time', 'update_time'],
+            'create' => ['phone', 'password', 'access_token', 'created_at', 'updated_at'],
             'login' => ['phone', 'password'],
-            'updatePassword' => ['password', 'update_time'],
-            'saveUpdatePassword' => ['password', 'update_time'],
+            'updatePassword' => ['password', 'updated_at'],
+            'saveUpdatePassword' => ['password', 'updated_at'],
         ];
     }
 

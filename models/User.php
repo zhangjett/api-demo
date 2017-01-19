@@ -2,15 +2,19 @@
 
 namespace app\models;
 
+use Yii;
 use yii\db\Query;
 
-class User extends \yii\base\Object implements \yii\web\IdentityInterface
+class User extends \yii\base\Object implements \yii\web\IdentityInterface, \yii\filters\RateLimitInterface
 {
     public $id;
     public $username;
     public $password;
     public $authKey;
     public $accessToken;
+    public $rateLimit;
+    public $allowance;
+    public $allowanceUpdatedAt;
 
     private static $users = [
         '100' => [
@@ -45,7 +49,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
     {
         $data = (new Query)
             ->from('user')
-            ->select(['id' => 'user_id'])
+            ->select(['id' => 'user_id', 'rateLimit' => 'rate_limit', 'allowance', 'allowanceUpdatedAt' => 'allowance_updated_at'])
             ->where('access_token = :access_token')
             ->addParams([':access_token' => $token])
             ->one();
@@ -107,5 +111,32 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
     public function validatePassword($password)
     {
         return $this->password === $password;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRateLimit($request, $action)
+    {
+        return [$this->rateLimit, 1];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function loadAllowance($request, $action)
+    {
+        return [$this->allowance, $this->allowanceUpdatedAt];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function saveAllowance($request, $action, $allowance, $timestamp)
+    {
+        Yii::$app->db->createCommand()->update('user', [
+            'allowance' => $allowance,
+            'allowance_updated_at' => $timestamp
+        ], 'user_id = '.$this->id)->execute();
     }
 }

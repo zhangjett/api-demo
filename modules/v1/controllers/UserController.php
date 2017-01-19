@@ -37,9 +37,9 @@ class UserController extends Controller
      * @apiGroup user
      * @apiVersion 1.0.0
      *
-     * @apiParam (获取区域列表) {String} [page = 1] 页码.
-     * @apiParam (获取区域列表) {String} [per-page = 20] 每页数量.
-     * @apiParam (获取区域列表) {string="user_id","-user_id"} [sort] 排序字段
+     * @apiParam (获取用户列表) {String} [page = 1] 页码.
+     * @apiParam (获取用户列表) {String} [per-page = 20] 每页数量.
+     * @apiParam (获取用户列表) {string="user_id","-user_id"} [sort] 排序字段
      *
      * @apiSuccess (获取用户列表_response) {String} user_id 用户ID.
      * @apiSuccess (获取用户列表_response) {String} phone  手机号.
